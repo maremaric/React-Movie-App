@@ -1,23 +1,54 @@
-import logo from './logo.svg';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import './App.css';
+import MovieCard from './components/MovieCard';
+import React from 'react';
 
-function App() {
+const API_URL = 'http://www.omdbapi.com?apikey=';
+
+const titles = ['spiderman', 'batman', 'Game of Thrones', 'superman'];
+
+const App = () => {
+
+  const [categories, setCategories] = useState('');
+
+  const fetchMovies = async () => {
+    const promises = titles.map((item) => {
+      return axios.get(`${API_URL}&s=${item}`);
+    })
+    Promise.all(promises).then((values) => {
+      const categoriesElem = values.map((movi, index) => {return { name: titles[index], data: movi.data.Search }})
+      console.log(categoriesElem);
+      setCategories(categoriesElem);
+    });
+  }
+
+  useEffect(() => {
+    fetchMovies();
+  }, []);
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Movie App</h1>
+      {
+        categories.length > 0
+        ? (
+          categories.map((category, index) => (
+          <div className='container' key={index}>
+            <div className='app__movies-wrapper'>
+              {category.data.map((movie, index) => (
+                <MovieCard key={index} movie={movie} />
+              ))}
+            </div>
+          </div>
+        ))
+        ) : (
+          <div className='empty'>
+            <h2>No movies found</h2>
+          </div>
+        )
+      }
     </div>
   );
 }
