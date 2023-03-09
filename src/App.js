@@ -4,7 +4,7 @@ import './App.css';
 import MovieCard from './components/MovieCard';
 import React from 'react';
 
-const API_URL = 'http://www.omdbapi.com?apikey=';
+const API_URL = `${process.env.REACT_APP_MOVIE_URL}?apikey=${process.env.REACT_APP_MOVIE_API_KEY}`;
 
 const titles = ['spiderman', 'batman', 'Game of Thrones', 'superman'];
 
@@ -27,9 +27,8 @@ const App = () => {
     fetchMovies();
   }, []);
 
-
   return (
-    <div className="App">
+    <div className="app">
       <h1>Movie App</h1>
       {
         categories.length > 0
