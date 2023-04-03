@@ -18,7 +18,7 @@ body {
 }
 
 .app {
-  padding: 4rem;
+  padding: 64px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,6 +66,13 @@ h1 {
   overflow-y: hidden;
   overflow-x: scroll;
   height: 520px;
+  border: 1px solid transparent;
+  transition: all 250ms ease-in-out;
+}
+
+.container.active {
+  border: 1px solid #f8f8f8;
+  border-radius: 10px;
 }
 
 .container::-webkit-scrollbar {

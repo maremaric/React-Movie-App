@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './App.css';
 import MovieCard from './components/MovieCard';
 import React from 'react';
@@ -26,6 +26,96 @@ const App = () => {
   useEffect(() => {
     fetchMovies();
   }, []);
+
+
+
+  
+
+ /* const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "ArrowUp") {
+        setActiveIndex((activeIndex) =>
+          activeIndex === 0 ? activeIndex : activeIndex - 1
+        );
+      } else if (event.key === "ArrowDown") {
+        setActiveIndex((activeIndex) =>
+          activeIndex === containerDivs.length - 1
+            ? activeIndex
+            : activeIndex + 1
+        );
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeIndex]);
+
+  const containerDivs = document.querySelectorAll(".container");
+
+  useEffect(() => {
+    containerDivs.forEach((div, index) => {
+      if (index === activeIndex) {
+        div.classList.add("active");
+        div.focus();
+      } else {
+        div.classList.remove("active");
+      }
+    });
+  }, [activeIndex, containerDivs]);
+*/
+
+
+
+
+
+const [activeIndex, setActiveIndex] = useState(0);
+const containerDivs = document.querySelectorAll(".container");
+const activeDivRef = useRef(null);
+
+useEffect(() => {
+  const handleKeyDown = (event) => {
+    if (event.key === "ArrowUp") {
+      setActiveIndex((activeIndex) =>
+        activeIndex === 0 ? activeIndex : activeIndex - 1
+      );
+    } else if (event.key === "ArrowDown") {
+      setActiveIndex((activeIndex) =>
+        activeIndex === containerDivs.length - 1
+          ? activeIndex
+          : activeIndex + 1
+      );
+    }
+  };
+
+  document.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    document.removeEventListener("keydown", handleKeyDown);
+  };
+}, [activeIndex, containerDivs]);
+
+useEffect(() => {
+  containerDivs.forEach((div, index) => {
+    if (index === activeIndex) {
+      div.classList.add("active");
+      activeDivRef.current = div;
+      div.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      div.classList.remove("active");
+    }
+  });
+}, [activeIndex, containerDivs]);
+
+
+
+
+
+
 
   return (
     <div className="app">
