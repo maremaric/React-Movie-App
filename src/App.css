@@ -70,6 +70,7 @@ h1 {
 
 .modal__image {
   width: 100%;
+  max-width: 500px;
 }
 
 .movie__img {
@@ -100,11 +101,12 @@ h1 {
   overflow-x: scroll;
   height: 520px;
   transition: all 250ms ease-in-out;
+  scroll-behavior: smooth;
 }
 
-/* .container::-webkit-scrollbar {
+.container::-webkit-scrollbar {
   display: none;
-} */
+}
 
 .app__movies-wrapper {
   display: flex;
@@ -127,6 +129,7 @@ h1 {
   /* transform: scale(1.2); */
   box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
   transform: scale(1.05, 1.05);
+  border: 2px solid red;
 }
 
 .movie div:nth-of-type(1) {
