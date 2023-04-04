@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import MovieCard from './components/MovieCard';
+import Modal from './components/Modal';
 import React from 'react';
 
 const API_URL = `${process.env.REACT_APP_MOVIE_URL}?apikey=${process.env.REACT_APP_MOVIE_API_KEY}`;
@@ -10,15 +11,15 @@ const titles = ['spiderman', 'batman', 'Game of Thrones', 'superman'];
 
 const App = () => {
 
-  const [categories, setCategories] = useState('');
+  const [categories, setCategories] = useState([]);
 
   const fetchMovies = async () => {
     const promises = titles.map((item) => {
       return axios.get(`${API_URL}&s=${item}`);
     })
     Promise.all(promises).then((values) => {
-      const categoriesElem = values.map((movi, index) => {return { name: titles[index], data: movi.data.Search }})
-      console.log(categoriesElem);
+      const categoriesElem = values.map((movi, index) => { return movi.data.Search })
+      // console.log(categoriesElem);
       setCategories(categoriesElem);
     });
   }
@@ -27,24 +28,56 @@ const App = () => {
     fetchMovies();
   }, []);
 
+ 
 
 
+
+  const [xIndex, setXIndex] = useState(0);
+  const [yIndex, setYIndex] = useState(0);
+
+
+ 
+ 
+
+  // current active elem:  categories[yIndex][xIndex]
   
 
- /* const [activeIndex, setActiveIndex] = useState(0);
+  const [show, setShow] = useState(false);
+
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "ArrowUp") {
-        setActiveIndex((activeIndex) =>
-          activeIndex === 0 ? activeIndex : activeIndex - 1
+        setYIndex((yIndex) =>
+        yIndex === 0 ? yIndex : yIndex - 1
         );
+        setXIndex(0);
       } else if (event.key === "ArrowDown") {
-        setActiveIndex((activeIndex) =>
-          activeIndex === containerDivs.length - 1
-            ? activeIndex
-            : activeIndex + 1
+        setYIndex((yIndex) =>
+        yIndex === categories.length - 1
+            ? yIndex
+            : yIndex + 1
         );
+        setXIndex(0);
+      } else if (event.key === "ArrowRight") {
+        setXIndex((xIndex) =>
+        xIndex === categories[yIndex].length - 1
+            ? xIndex
+            : xIndex + 1
+        );
+        
+      } else if (event.key === "ArrowLeft") {
+        setXIndex((xIndex) =>
+        xIndex === 0 ? xIndex : xIndex - 1
+        );
+      } else if (event.key === "Enter") {
+        handleShow();
+        
+      } else if (event.key === "Escape") {
+        handleClose();
       }
     };
 
@@ -53,64 +86,7 @@ const App = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeIndex]);
-
-  const containerDivs = document.querySelectorAll(".container");
-
-  useEffect(() => {
-    containerDivs.forEach((div, index) => {
-      if (index === activeIndex) {
-        div.classList.add("active");
-        div.focus();
-      } else {
-        div.classList.remove("active");
-      }
-    });
-  }, [activeIndex, containerDivs]);
-*/
-
-
-
-
-
-const [activeIndex, setActiveIndex] = useState(0);
-const containerDivs = document.querySelectorAll(".container");
-const activeDivRef = useRef(null);
-
-useEffect(() => {
-  const handleKeyDown = (event) => {
-    if (event.key === "ArrowUp") {
-      setActiveIndex((activeIndex) =>
-        activeIndex === 0 ? activeIndex : activeIndex - 1
-      );
-    } else if (event.key === "ArrowDown") {
-      setActiveIndex((activeIndex) =>
-        activeIndex === containerDivs.length - 1
-          ? activeIndex
-          : activeIndex + 1
-      );
-    }
-  };
-
-  document.addEventListener("keydown", handleKeyDown);
-
-  return () => {
-    document.removeEventListener("keydown", handleKeyDown);
-  };
-}, [activeIndex, containerDivs]);
-
-useEffect(() => {
-  containerDivs.forEach((div, index) => {
-    if (index === activeIndex) {
-      div.classList.add("active");
-      activeDivRef.current = div;
-      div.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else {
-      div.classList.remove("active");
-    }
-  });
-}, [activeIndex, containerDivs]);
-
+  }, [categories, xIndex, yIndex]);
 
 
 
@@ -119,24 +95,34 @@ useEffect(() => {
 
   return (
     <div className="app">
+      {
+        show === true ? (
+          <div>
+            <Modal title={categories[yIndex][xIndex]?.Title} image={categories[yIndex][xIndex]?.Poster} year={categories[yIndex][xIndex]?.Year} type={categories[yIndex][xIndex]?.Type} />
+          </div>
+        ) : (
+          <div></div>
+        )
+      }
+      <div></div>
       <h1>Movie App</h1>
       {
         categories.length > 0
-        ? (
-          categories.map((category, index) => (
-          <div className='container' key={index}>
-            <div className='app__movies-wrapper'>
-              {category.data.map((movie, index) => (
-                <MovieCard key={index} movie={movie} />
-              ))}
+          ? (
+            categories.map((category, elYIndex) => (
+              <div className='container' key={elYIndex}>
+                <div className='app__movies-wrapper'>
+                  {category.map((movie, elXIndex) => (
+                    <MovieCard activeX={xIndex} activeY={yIndex} elemY={elYIndex} elemX={elXIndex} key={elXIndex} movie={movie} />
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className='empty'>
+              <h2>No movies found</h2>
             </div>
-          </div>
-        ))
-        ) : (
-          <div className='empty'>
-            <h2>No movies found</h2>
-          </div>
-        )
+          )
       }
     </div>
   );
