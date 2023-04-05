@@ -35,11 +35,11 @@ const App = () => {
   const containerRef = useRef(null);
 
   const handleScrollRight = () => {
-    containerRef.current.scrollLeft += 325;
+    containerRef.current.scrollLeft += 330;
   };
 
   const handleScrollLeft = () => {
-    containerRef.current.scrollLeft -= 325;
+    containerRef.current.scrollLeft -= 330;
   };
 
   const resetScroll = () => {
@@ -48,9 +48,9 @@ const App = () => {
 
   useLayoutEffect(() => {
     if (containerRef.current) {
-      containerRef.current.scrollIntoView({ block: "center", inline: "center", behavior: "auto" });
+      containerRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
     }
-  }, [containerRef.current, yIndex])
+  }, [yIndex])
  
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
@@ -62,23 +62,27 @@ const App = () => {
     const handleKeyDown = (event) => {
       event.preventDefault();
       if (event.key === "ArrowUp") {
-        if (yIndex !== 0) {
-          resetScroll();
-          setXIndex(0);
-        }
+        // if (yIndex !== 0) {
+        //   resetScroll();
+        //   setXIndex(0);
+        // }
         setYIndex((yIndex) =>
         yIndex === 0 ? yIndex : yIndex - 1
       );
+      resetScroll();
+      setXIndex(0);
       } else if (event.key === "ArrowDown") {
-        if (yIndex !== categories.length - 1) {
-          resetScroll();
-          setXIndex(0);
-        }
+        // if (yIndex !== categories.length - 1) {
+        //   resetScroll();
+        //   setXIndex(0);
+        // }
         setYIndex((yIndex) =>
         yIndex === categories.length - 1
             ? yIndex
             : yIndex + 1
         );
+        resetScroll();
+        setXIndex(0);
       } else if (event.key === "ArrowRight") {
         setXIndex((xIndex) =>
         xIndex === categories[yIndex].length - 1
